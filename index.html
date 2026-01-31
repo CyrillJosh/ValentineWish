@@ -235,6 +235,26 @@
           <button type="submit" id="yesBtn">YES</button>
           <button type="button" id="noBtn">NO</button>
         </form>
+        <div
+          id="ending"
+          style="display: none; text-align: center; margin-top: 20px"
+        >
+          <h2 style="color: #facc15">💖 She said YES! 💖</h2>
+          <p>You made my Valentine extra special 🥹</p>
+          <button
+            id="replayBtn"
+            style="
+              padding: 10px 20px;
+              border: none;
+              border-radius: 999px;
+              background: #3b82f6;
+              color: white;
+              cursor: pointer;
+            "
+          >
+            Replay
+          </button>
+        </div>
       </div>
     </div>
   </body>
@@ -245,39 +265,80 @@
   <script>
     const form = document.getElementById("mockForm");
     const input = document.getElementById("textInput");
+    const ending = document.getElementById("ending");
+    const replayBtn = document.getElementById("replayBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+
+    // Store initial positions of hearts
+    const hearts = document.querySelectorAll(".eight svg");
+    const heartStates = [];
+    hearts.forEach((heart) => {
+      heartStates.push({ y: 0, scale: 1, opacity: 1 });
+    });
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
       fetch("https://6819ae131ac115563505b710.mockapi.io/Response", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: input.value }),
       })
         .then((res) => res.json())
         .then(() => {
-          // 💙 cute animation feedback
+          // Animate YES button 💙
           TweenMax.fromTo(
-            "#yesBtn",
+            yesBtn,
             0.3,
             { scale: 1 },
             { scale: 1.3, yoyo: true, repeat: 1 },
           );
 
-          // alert("She said YES 💙");
+          // Hide form
+          form.style.display = "none";
+
+          // Show ending message
+          ending.style.display = "block";
+
+          // Hearts float up
+          hearts.forEach((heart, i) => {
+            TweenMax.to(heart, 2, {
+              y: -window.innerHeight,
+              scale: 2,
+              opacity: 0,
+              delay: i * 0.2,
+              ease: Power1.easeInOut,
+            });
+          });
         })
         .catch(console.error);
     });
 
-    const noBtn = document.getElementById("noBtn");
-
+    // NO button avoids cursor
     noBtn.addEventListener("mouseover", () => {
       const x = Math.random() * 300 - 150;
       const y = Math.random() * 200 - 100;
-
       noBtn.style.transform = `translate(${x}px, ${y}px)`;
+    });
+
+    // Replay button resets animation
+    replayBtn.addEventListener("click", () => {
+      ending.style.display = "none";
+      form.style.display = "flex"; // Show form again
+      form.style.flexDirection = "column"; // ensure correct layout
+      form.style.alignItems = "center";
+
+      // Reset hearts to original state
+      hearts.forEach((heart, i) => {
+        TweenMax.set(heart, heartStates[i]);
+      });
+
+      // Reset NO button position
+      noBtn.style.transform = "translate(0,0)";
+
+      // Optionally restart main timeline if defined
+      if (typeof tl !== "undefined") tl.restart();
     });
   </script>
 </html>
