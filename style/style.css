@@ -35,7 +35,6 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  top: 20vh;
 }
 
 .one {
@@ -333,4 +332,31 @@ body {
     font-size: 1.5rem;
     font-weight: lighter;
   }
+}
+
+.nine {
+  /* Use 'min-height' so it can grow if the text is long, 
+     but starts at 100% of the screen height */
+  min-height: 100vh;
+  width: 100vw;
+
+  /* Centers the text perfectly on the screen */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  /* Prevents text from hitting the very edge of the screen */
+  padding: 20px;
+  box-sizing: border-box;
+
+  /* Optional: keeps it clean on mobile */
+  margin: 0;
+}
+
+/* Ensure the paragraph looks nice inside the full screen */
+.nine p {
+  max-width: 600px;
+  line-height: 1.6;
+  font-size: 1.1rem;
 }
